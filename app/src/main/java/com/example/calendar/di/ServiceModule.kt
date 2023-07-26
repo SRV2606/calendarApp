@@ -16,7 +16,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 @InstallIn(SingletonComponent::class)
 class ServiceModule {
 
-    private val BASE_URL = "https://www.omdbapi.com/"
+    private val BASE_URL = "http://dev.frndapp.in:8080"
 
     @Provides
     fun provideService(@com.example.data.utlils.Retrofit retrofit: Retrofit): ApiService {

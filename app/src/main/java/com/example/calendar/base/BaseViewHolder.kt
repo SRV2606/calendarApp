@@ -7,6 +7,6 @@ abstract class BaseViewHolder<T>(viewBinding: ViewDataBinding) :
     RecyclerView.ViewHolder(viewBinding.root) {
     abstract fun setItem(
         data: T?,
-        itemClickListener: (T) -> Unit
+        itemClickListener: ((T) -> Unit)?
     )
 }

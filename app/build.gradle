@@ -91,6 +91,10 @@ dependencies {
     kapt "androidx.room:room-compiler:2.2.4"
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.9'
 
+    implementation "androidx.navigation:navigation-ui:2.6.0"
+    implementation "androidx.navigation:navigation-fragment-ktx:2.6.0"
+    implementation "androidx.navigation:navigation-ui-ktx:2.6.0"
+
 
     //okhttp
     implementation "com.squareup.okhttp3:okhttp:4.11.0"

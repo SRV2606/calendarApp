@@ -10,6 +10,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 fun <T> ComponentActivity.collectEvent(flow: Flow<T>, collect: suspend (T) -> Unit): Job {
     return lifecycleScope.launch {
@@ -26,4 +29,12 @@ fun <T> Fragment.collectEvent(flow: Flow<T>, collect: suspend (T) -> Unit): Job 
         }
     }
 }
+
+fun formatDateToDayOfMonth(dateString: String): String {
+    val inputFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH)
+    val date: Date = inputFormat.parse(dateString)
+    val outputFormat = SimpleDateFormat("dd", Locale.ENGLISH)
+    return outputFormat.format(date)
+}
+
 
