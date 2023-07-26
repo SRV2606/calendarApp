@@ -1,7 +1,6 @@
-package com.example.calendar.ui
+package com.example.calendar.ui.viewHolders
 
 import android.content.Context
-import android.util.Log
 import com.example.calendar.base.BaseViewHolder
 import com.example.calendar.databinding.LayoutDaysOfWeekBinding
 
@@ -12,7 +11,6 @@ class DaysOfWeekViewHolder(
 
 
     override fun setItem(data: String?, itemClickListener: ((String) -> Unit)?) {
-        Log.d("SHAW_TAG", "setItem: " + data)
         binding.dayOfWeekTextView.text = data
     }
 }

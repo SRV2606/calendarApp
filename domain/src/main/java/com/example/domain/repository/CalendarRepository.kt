@@ -6,6 +6,10 @@ import com.example.domain.models.ClientResult
 interface CalendarRepository {
 
 
+    companion object {
+        const val USER_ID = 9001
+    }
+
     suspend fun getCalendarTasks(userID: Int): ClientResult<CalendarTasksBean>
 
     suspend fun deleteCalendarTask(userID: Int, taskID: Int): ClientResult<Unit>

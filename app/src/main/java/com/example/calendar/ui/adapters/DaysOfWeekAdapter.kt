@@ -1,4 +1,4 @@
-package com.example.calendar.ui
+package com.example.calendar.ui.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -6,27 +6,27 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.example.calendar.base.BaseViewHolder
-import com.example.calendar.databinding.LayoutCalendarDayBinding
-import com.example.domain.models.CalendarDay
+import com.example.calendar.databinding.LayoutDaysOfWeekBinding
+import com.example.calendar.ui.viewHolders.DaysOfWeekViewHolder
 
-class CalendarAdapter(
-    private val itemClickListener: (CalendarDay) -> Unit,
+class DaysOfWeekAdapter(
+    private val itemClickListener: (String) -> Unit,
     private val context: Context
-) : ListAdapter<CalendarDay, BaseViewHolder<*>>(DIFF_CALLBACK) {
+) : ListAdapter<String, BaseViewHolder<*>>(DIFF_CALLBACK) {
 
 
     companion object {
-        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<CalendarDay>() {
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<String>() {
             override fun areItemsTheSame(
-                oldItem: CalendarDay,
-                newItem: CalendarDay
+                oldItem: String,
+                newItem: String
             ): Boolean {
-                return oldItem.id == newItem.id
+                return oldItem == newItem
             }
 
             override fun areContentsTheSame(
-                oldItem: CalendarDay,
-                newItem: CalendarDay
+                oldItem: String,
+                newItem: String
             ): Boolean {
                 return oldItem == newItem
             }
@@ -35,8 +35,8 @@ class CalendarAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<*> {
-        return CalendarViewHolder(
-            LayoutCalendarDayBinding.inflate(
+        return DaysOfWeekViewHolder(
+            LayoutDaysOfWeekBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
@@ -45,8 +45,8 @@ class CalendarAdapter(
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder<*>, position: Int) {
-        (holder as CalendarViewHolder).setItem(
-            currentList[position], itemClickListener
+        (holder as DaysOfWeekViewHolder).setItem(
+            currentList[position], null
         )
     }
 
@@ -54,4 +54,9 @@ class CalendarAdapter(
         return super.getItemViewType(position)
 
     }
+
+    override fun getItemCount(): Int {
+        return currentList.size
+    }
+
 }

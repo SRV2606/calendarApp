@@ -1,4 +1,4 @@
-package com.example.calendar.ui
+package com.example.calendar.ui.viewHolders
 
 import android.content.Context
 import androidx.core.content.ContextCompat
@@ -18,8 +18,6 @@ class CalendarViewHolder(
         val day = formatDateToDayOfMonth(data?.date.toString())
         binding.dayOfWeekTextView.text = day
 
-
-        // If the day does not belong to the current month, hide the views
         data?.let { calendarDay ->
             if (!calendarDay.isCurrentMonth) {
                 val color = ContextCompat.getColor(context, R.color.purple_200)

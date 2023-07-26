@@ -1,6 +1,5 @@
 package com.example.calendar.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,6 +8,7 @@ import com.example.data.mappers.CalendarMapper
 import com.example.domain.models.ApiError
 import com.example.domain.models.CalendarDay
 import com.example.domain.models.ClientResult
+import com.example.domain.repository.CalendarRepository
 import com.example.domain.usecases.GetCalendarUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,8 +22,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val getCalendarUseCase: GetCalendarUseCase,
     private val calendarMapper: CalendarMapper
-) :
-    ViewModel() {
+) : ViewModel() {
 
     private val _calendarDaysLiveData: MutableLiveData<List<CalendarDay>> = MutableLiveData()
     val calendarDaysLiveData: LiveData<List<CalendarDay>> get() = _calendarDaysLiveData
@@ -46,34 +45,26 @@ class MainViewModel @Inject constructor(
 
         val calendarDaysList = mutableListOf<CalendarDay>()
 
-        // Calculate the number of days from the previous month to be shown
         val daysFromPrevMonth =
-            (firstDayOfMonth - Calendar.SUNDAY + 7) % 7 // Adjust to start from Monday (Sunday=1, Monday=2, ..., Saturday=7)
+            (firstDayOfMonth - Calendar.SUNDAY + 7) % 7
 
-        // Handle empty cells from the previous month
         calendar.add(Calendar.DAY_OF_MONTH, -daysFromPrevMonth)
         for (i in 1..daysFromPrevMonth) {
             val date = calendar.time
-            // Set isCurrentMonth to false as it belongs to the previous month
             calendarDaysList.add(CalendarDay(date = date, tasksCount = 0, isCurrentMonth = false))
             calendar.add(Calendar.DAY_OF_MONTH, 1)
         }
 
-        // Handle days of the current month
         for (i in 1..daysInMonth) {
             val date = calendar.time
-            // Set isCurrentMonth to true as it belongs to the current month
             calendarDaysList.add(CalendarDay(date = date, tasksCount = 0, isCurrentMonth = true))
             calendar.add(Calendar.DAY_OF_MONTH, 1)
         }
 
-        // Calculate the number of days from the next month to be shown
         val daysFromNextMonth = 35 - calendarDaysList.size
 
-        // Handle empty cells from the next month
         for (i in 1..daysFromNextMonth) {
             val date = calendar.time
-            // Set isCurrentMonth to false as it belongs to the next month
             calendarDaysList.add(CalendarDay(date = date, tasksCount = 0, isCurrentMonth = false))
             calendar.add(Calendar.DAY_OF_MONTH, 1)
         }
@@ -81,16 +72,17 @@ class MainViewModel @Inject constructor(
         return calendarDaysList
     }
 
-    fun storeCalendarTask(calendarDay: CalendarDay) {
+    fun storeCalendarTask(calendarDay: CalendarDay, title: String, description: String) {
         viewModelScope.launch {
+            val taskBean = calendarMapper.toTaskBean(calendarDay, title, description)
 
-            val taskBean = calendarMapper.toTaskBean(calendarDay)
-
-            when (val req = getCalendarUseCase.storeCalendarTask(userID = 9001, taskBean)) {
+            when (val req = getCalendarUseCase.storeCalendarTask(
+                userID = CalendarRepository.USER_ID,
+                taskBean
+            )) {
                 is ClientResult.Success -> {
                     req.data.let {
                         _storeTask.emit(ClientResult.Success(req.data))
-                        Log.d("SHAW_TAG", "storeCalendarTask: " + it)
                     }
                 }
 

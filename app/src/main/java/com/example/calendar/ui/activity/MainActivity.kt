@@ -1,9 +1,8 @@
-package com.example.calendar.ui
+package com.example.calendar.ui.activity
 
 
 import android.app.DatePickerDialog
 import android.content.Intent
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
@@ -13,6 +12,9 @@ import com.example.calendar.base.BaseActivity
 import com.example.calendar.collectEvent
 import com.example.calendar.databinding.ActivityMainBinding
 import com.example.calendar.formatDateToDayOfMonth
+import com.example.calendar.ui.CreateTaskBottomsheet
+import com.example.calendar.ui.adapters.CalendarAdapter
+import com.example.calendar.ui.adapters.DaysOfWeekAdapter
 import com.example.calendar.viewmodel.MainViewModel
 import com.example.domain.models.ClientResult
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,21 +31,32 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
 
     private val daysOfWeekAdapter by lazy {
         DaysOfWeekAdapter(itemClickListener = {
-            // we can open any other view , or bottomsheet or anythign here if needed with data
 
         }, context = this@MainActivity)
     }
 
+    companion object {
+        const val SELECTED_DATE = "selectedDate"
+    }
+
+    //Please click on 5th date existing list of meetings
     private val calendarAdapter by lazy {
         CalendarAdapter(itemClickListener = {
-            mainViewModel.storeCalendarTask(it)
-            startTaskDetailsActivity(formatDateToDayOfMonth(it.date.toString()))
+            CreateTaskBottomsheet().apply {
+                setOnSubmissionListener { title, description ->
+                    mainViewModel.storeCalendarTask(it, title, description)
+                    startTaskDetailsActivity(formatDateToDayOfMonth(it.date.toString()))
+                }
+            }.show(supportFragmentManager, CreateTaskBottomsheet.TAG)
+
         }, context = this@MainActivity)
+
+
     }
 
     private fun startTaskDetailsActivity(date: String) {
         val intent = Intent(this, TaskDetailsActivity::class.java)
-        intent.putExtra("selectedDate", date)
+        intent.putExtra(SELECTED_DATE, date)
         startActivity(intent)
     }
 
@@ -74,19 +87,17 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
         daysList.add("T")
         daysList.add("F")
         daysList.add("S")
-        Log.d("SHAW_TAG", "setUpDaysOfWeekRV: " + daysList.toList())
-        daysOfWeekAdapter.submitList(daysList.toList())
     }
 
     override fun observeData() {
         mainViewModel.calendarDaysLiveData.observe(this) {
+            daysOfWeekAdapter.submitList(daysList.toList())
             calendarAdapter.submitList(it)
         }
 
         collectEvent(mainViewModel.storeTask) {
             when (it) {
                 is ClientResult.Success -> {
-                    Log.d("SHAW_TAG", "observeData: " + it.data)
                     Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
                 }
 
@@ -111,7 +122,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
         val datePickerDialog = DatePickerDialog(
             this@MainActivity,
             { _, selectedYear, selectedMonth, _ ->
-                binding.yearMonthTV.text = "Selected $selectedYear and $selectedMonth"
+                binding.yearMonthTV.text =
+                    "Selected  Year  $selectedYear and  Month  $selectedMonth"
                 mainViewModel.fetchCalendarData(selectedYear, selectedMonth)
 
             },

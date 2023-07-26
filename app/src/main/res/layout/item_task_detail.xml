@@ -8,18 +8,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
+        app:cardCornerRadius="8dp"
         android:background="@color/design_default_color_primary"
         android:elevation="4dp"
         android:padding="16dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:padding="12dp">
 
             <TextView
                 android:id="@+id/titleTV"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingHorizontal="8dp"
+                android:textSize="16sp"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -27,12 +33,26 @@
 
             <TextView
                 android:id="@+id/descriptionTV"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:gravity="start"
+                android:paddingHorizontal="8dp"
+                android:textSize="12sp"
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/titleTV"
                 tools:text="This is descruption" />
+
+            <Button
+                android:id="@+id/deleteCTA"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Delete"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/descriptionTV" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

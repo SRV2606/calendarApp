@@ -1,33 +1,33 @@
-package com.example.calendar.ui
+package com.example.calendar.ui.adapters
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.example.calendar.base.BaseViewHolder
-import com.example.calendar.databinding.ItemTaskDetailBinding
-import com.example.domain.models.CalendarTasksBean
+import com.example.calendar.databinding.LayoutCalendarDayBinding
+import com.example.calendar.ui.viewHolders.CalendarViewHolder
+import com.example.domain.models.CalendarDay
 
-class TaskDetailsAdapter(
-    private val itemClickListener: (CalendarTasksBean.Task) -> Unit,
+class CalendarAdapter(
+    private val itemClickListener: (CalendarDay) -> Unit,
     private val context: Context
-) : ListAdapter<CalendarTasksBean.Task, BaseViewHolder<*>>(DIFF_CALLBACK) {
+) : ListAdapter<CalendarDay, BaseViewHolder<*>>(DIFF_CALLBACK) {
 
 
     companion object {
-        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<CalendarTasksBean.Task>() {
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<CalendarDay>() {
             override fun areItemsTheSame(
-                oldItem: CalendarTasksBean.Task,
-                newItem: CalendarTasksBean.Task
+                oldItem: CalendarDay,
+                newItem: CalendarDay
             ): Boolean {
-                return oldItem.taskId == newItem.taskId
+                return oldItem.id == newItem.id
             }
 
             override fun areContentsTheSame(
-                oldItem: CalendarTasksBean.Task,
-                newItem: CalendarTasksBean.Task
+                oldItem: CalendarDay,
+                newItem: CalendarDay
             ): Boolean {
                 return oldItem == newItem
             }
@@ -36,8 +36,8 @@ class TaskDetailsAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<*> {
-        return TaskDetailsViewHolder(
-            ItemTaskDetailBinding.inflate(
+        return CalendarViewHolder(
+            LayoutCalendarDayBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
@@ -46,7 +46,7 @@ class TaskDetailsAdapter(
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder<*>, position: Int) {
-        (holder as TaskDetailsViewHolder).setItem(
+        (holder as CalendarViewHolder).setItem(
             currentList[position], itemClickListener
         )
     }
@@ -55,11 +55,4 @@ class TaskDetailsAdapter(
         return super.getItemViewType(position)
 
     }
-
-    override fun getItemCount(): Int {
-        Log.d("SHAW_TAG", "getItemCount: " + currentList)
-        return currentList.size
-    }
-
-
 }

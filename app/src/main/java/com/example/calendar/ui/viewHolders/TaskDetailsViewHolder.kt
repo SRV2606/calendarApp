@@ -1,4 +1,4 @@
-package com.example.calendar.ui
+package com.example.calendar.ui.viewHolders
 
 import android.content.Context
 import com.example.calendar.base.BaseViewHolder
@@ -17,7 +17,8 @@ class TaskDetailsViewHolder(
         binding.descriptionTV.text = data?.taskDetail?.description
 
 
-        binding.parentCardCL.setOnClickListener {
+
+        binding.deleteCTA.setOnClickListener {
             if (itemClickListener != null) {
                 data?.let { it1 -> itemClickListener(it1) }
             }

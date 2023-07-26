@@ -1,16 +1,18 @@
-package com.example.calendar.ui
+package com.example.calendar.ui.activity
 
 import android.content.Intent
-import android.util.Log
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.calendar.R
 import com.example.calendar.base.BaseActivity
 import com.example.calendar.collectEvent
 import com.example.calendar.databinding.ActivityTaskDetailsBinding
+import com.example.calendar.ui.adapters.TaskDetailsAdapter
 import com.example.calendar.viewmodel.TaskDetailsViewModel
 import com.example.domain.models.CalendarTasksBean
 import com.example.domain.models.ClientResult
+import com.example.domain.repository.CalendarRepository
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -21,10 +23,9 @@ class TaskDetailsActivity :
 
     private val taskDetailsViewModel by viewModels<TaskDetailsViewModel>()
 
-    private var taskList: MutableList<CalendarTasksBean.Task>? = mutableListOf()
 
     private val selectedDate by lazy {
-        intent.getStringExtra("selectedDate")
+        intent.getStringExtra(MainActivity.SELECTED_DATE)
     }
 
     private val taskListAdapter by lazy {
@@ -40,6 +41,7 @@ class TaskDetailsActivity :
     }
 
     override fun setupUi() {
+        binding.taskDateHeadingTV.text = "Selected Date : $selectedDate"
         setupRV()
     }
 
@@ -57,7 +59,7 @@ class TaskDetailsActivity :
                 }
 
                 is ClientResult.Error -> {
-
+                    Toast.makeText(this, it.error.message, Toast.LENGTH_SHORT).show()
                 }
 
                 is ClientResult.InProgress -> {
@@ -69,8 +71,7 @@ class TaskDetailsActivity :
         collectEvent(taskDetailsViewModel.deleteTask) {
             when (it) {
                 is ClientResult.Success -> {
-                    Log.d("SHAW_TAG_DELETE", "observeData: " + it)
-                    taskDetailsViewModel.getAllTasks(9001)
+                    taskDetailsViewModel.getAllTasks(CalendarRepository.USER_ID)
                 }
 
                 is ClientResult.Error -> {
@@ -85,11 +86,9 @@ class TaskDetailsActivity :
     }
 
     private fun filterByDate(data: CalendarTasksBean) {
-        Log.d("SHAW_TAG", "filterByDate: " + selectedDate)
         val taskList = data.tasks?.filter {
             it?.taskDetail?.date == selectedDate
         }
-        Log.d("SHAW_TAG", "filterByDate: " + taskList)
         if (taskList != null) {
             taskListAdapter.submitList(taskList.toList())
         }

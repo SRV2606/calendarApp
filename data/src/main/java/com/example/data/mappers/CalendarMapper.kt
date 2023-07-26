@@ -18,7 +18,6 @@ class CalendarMapper @Inject constructor() {
                 is ClientResult.Success -> {
                     val result = clientRes.data.let {
                         val tasks = it.tasks?.map { serverTask ->
-                            // Perform the mapping for each task in the list
                             CalendarTasksBean.Task(
                                 taskId = serverTask?.taskId,
                                 taskDetail = CalendarTasksBean.Task.TaskDetail(
@@ -28,7 +27,6 @@ class CalendarMapper @Inject constructor() {
                                 )
                             )
                         }
-                        // Create the CalendarTasksBean with the mapped tasks
                         CalendarTasksBean(tasks = tasks)
                     }
                     return ClientResult.Success(result)
@@ -46,12 +44,16 @@ class CalendarMapper @Inject constructor() {
         }
     }
 
-    fun toTaskBean(calendarDay: CalendarDay): CalendarTasksBean.Task {
+    fun toTaskBean(
+        calendarDay: CalendarDay,
+        title: String,
+        description: String
+    ): CalendarTasksBean.Task {
         return CalendarTasksBean.Task(
             taskId = formatDateToDayOfMonth(calendarDay.date.toString()).toInt(),
             taskDetail = CalendarTasksBean.Task.TaskDetail(
-                title = "This is title",
-                description = "This is descruption",
+                title = title,
+                description = description,
                 date = formatDateToDayOfMonth(calendarDay.date.toString())
             )
         )

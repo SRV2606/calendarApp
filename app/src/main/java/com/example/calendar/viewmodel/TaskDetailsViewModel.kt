@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.models.CalendarTasksBean
 import com.example.domain.models.ClientResult
+import com.example.domain.repository.CalendarRepository
 import com.example.domain.usecases.GetCalendarUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,13 +28,12 @@ class TaskDetailsViewModel @Inject constructor(
     val deleteTask = _deleteTaskResp.asStateFlow()
 
     init {
-        getAllTasks(9001)
+        getAllTasks(CalendarRepository.USER_ID)
     }
 
     fun getAllTasks(userID: Int) {
         viewModelScope.launch {
-            val req = getCalendarUseCase.getCalendarTasks(userID)
-            when (req) {
+            when (val req = getCalendarUseCase.getCalendarTasks(userID)) {
                 is ClientResult.Error -> {
 
                 }
@@ -52,7 +52,10 @@ class TaskDetailsViewModel @Inject constructor(
     fun deleteTask(it: CalendarTasksBean.Task) {
 
         viewModelScope.launch {
-            val req = getCalendarUseCase.deleteCalendarTask(9001, taskID = it.taskId!!)
+            val req = getCalendarUseCase.deleteCalendarTask(
+                CalendarRepository.USER_ID,
+                taskID = it.taskId!!
+            )
 
             when (req) {
                 is ClientResult.Success -> {
